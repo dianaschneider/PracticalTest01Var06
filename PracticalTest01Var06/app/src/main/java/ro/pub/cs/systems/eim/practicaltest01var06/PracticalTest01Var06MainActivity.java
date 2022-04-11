@@ -127,7 +127,11 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case Constants.ANOTHER_ACTIVITY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    Toast.makeText(this, "Secondary activity finished with result code OK", Toast.LENGTH_LONG).show();
+                    String scor = "";
+                    if (data != null) {
+                        scor += data.getStringExtra("SCOR");
+                    }
+                    Toast.makeText(this, "Scor = " + scor, Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(this, "Secondary activity finished with result code CANCEL", Toast.LENGTH_LONG).show();
                 }

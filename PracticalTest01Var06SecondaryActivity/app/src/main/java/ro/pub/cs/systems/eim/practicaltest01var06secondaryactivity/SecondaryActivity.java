@@ -13,6 +13,7 @@ public class SecondaryActivity extends AppCompatActivity {
     private Button okButton;
     private Intent intent;
     private HandleClickListener clickListener;
+    private String scor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +41,18 @@ public class SecondaryActivity extends AppCompatActivity {
             if (numberCheckboxes != null) {
                 if (numberCheckboxes.equals("0")) {
                     gainedText.setText(gainedText.getText() + "100");
+                    scor = "100";
                 } else if (numberCheckboxes.equals("1")) {
                     gainedText.setText(gainedText.getText() + "50");
+                    scor = "50";
                 } else if (numberCheckboxes.equals("2")) {
                     gainedText.setText(gainedText.getText() + "10");
+                    scor = "10";
+                } else {
+                    scor = "0";
                 }
             }
         }
-
         clickListener = new HandleClickListener();
         okButton.setOnClickListener(clickListener);
     }
@@ -57,7 +62,9 @@ public class SecondaryActivity extends AppCompatActivity {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.OK:
-                    setResult(RESULT_OK);
+                    Intent intentToParent = new Intent("ro.pub.cs.systems.eim.practicaltest01var06.intent.action.PracticalTest01Var06MainActivity");
+                    intentToParent.putExtra("SCOR", String.valueOf(scor));
+                    setResult(RESULT_OK, intentToParent);
                     break;
             }
             finish();
