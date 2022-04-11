@@ -11,4 +11,11 @@ public class Constants {
 
 
     public static final String SCOR_STATE = "scorState";
+
+    public static final String SERVICE_PACKAGE = "ro.pub.cs.systems.eim.practicaltest01var06service";
+    public static final String SERVICE_CLASS = "ro.pub.cs.systems.eim.practicaltest01var06service.PracticalTest01Var06Service";
+    public static final String SERVICE_DATA = "ro.pub.cs.systems.eim.practicaltest01var06service.PracticalTest01Var06Service.DATA";
+    public static final String SERVICE_ACTION = "ro.pub.cs.systems.eim.practicaltest01var06service.PracticalTest01Var06Service.ACTION";
+
+
 }

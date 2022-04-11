@@ -17,7 +17,14 @@ public class PracticalTest01Var06Service extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
+        if (intent != null) {
+            String scor = intent.getStringExtra(Constants.SERVICE_DATA);
+            Intent action = new Intent();
+            action.setAction(Constants.SERVICE_ACTION);
+            action.putExtra(Constants.SERVICE_DATA, "Victory " + scor);
+            getApplicationContext().sendBroadcast(action);
+        }
+        return Service.START_REDELIVER_INTENT;
     }
 
     @Nullable

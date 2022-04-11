@@ -2,7 +2,11 @@ package ro.pub.cs.systems.eim.practicaltest01var06;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +34,9 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity {
     private boolean checked1, checked2, checked3;
     private Intent secondaryActivityIntent;
     private String scor = "";
+    Intent service;
+    private HandleBroadcastReceiver broadcastReceiver;
+    private IntentFilter intentFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +64,28 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity {
             scor = savedInstanceState.getString(Constants.SCOR_STATE);
             Toast.makeText(this, "Scor = " + scor, Toast.LENGTH_LONG).show();
         }
+
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(Constants.SERVICE_ACTION);
+        broadcastReceiver = new HandleBroadcastReceiver();
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopService(service);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
     }
 
     private class HandleClickListener implements View.OnClickListener {
@@ -155,7 +184,15 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity {
                         }
                         String newsc = data.getStringExtra("SCOR");
                         prev += Integer.parseInt(newsc);
-                        scor += String.valueOf(prev);
+                        scor = String.valueOf(prev);
+                        if (prev > 0) {
+                            //start service when scor > 0 : D.1.b
+                            service = new Intent();
+                            service.setComponent(new ComponentName(Constants.SERVICE_PACKAGE,
+                                    Constants.SERVICE_CLASS));
+                            service.putExtra(Constants.SERVICE_DATA, scor);
+                            getApplicationContext().startService(service);
+                        }
                     }
                     Toast.makeText(this, "Scor = " + scor, Toast.LENGTH_LONG).show();
                 } else {
@@ -180,5 +217,13 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity {
         }
     }
 
-
+    private class HandleBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+             if (intent!= null) {
+                String data = intent.getStringExtra(Constants.SERVICE_DATA);
+                Toast.makeText(getApplicationContext(), data, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 }
