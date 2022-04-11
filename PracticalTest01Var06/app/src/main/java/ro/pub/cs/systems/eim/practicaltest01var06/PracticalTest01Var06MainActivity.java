@@ -2,6 +2,7 @@ package ro.pub.cs.systems.eim.practicaltest01var06;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -27,6 +28,7 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity {
     private HandleClickListener clickListener;
     private String number1 = "", number2 = "", number3 = "";
     private boolean checked1, checked2, checked3;
+    private Intent secondaryActivityIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,23 +59,33 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity {
             switch (view.getId()) {
                 case R.id.PLAY:
                     boolean addStar = true;
+                    int numberCheckboxes = 3;
                     if (number1.equals("*") || number2.equals("*") || number3.equals("*")) {
                         addStar = false;
                     }
                     if (!checked1) {
                         number1 = randomStringFromSet(addStar);
                         number1EditText.setText(number1);
+                        numberCheckboxes--;
                     }
                     if (!checked2) {
                         number2 = randomStringFromSet(addStar);
                         number2EditText.setText(number2);
+                        numberCheckboxes--;
                     }
                     if (!checked3) {
                         number3 = randomStringFromSet(addStar);
                         number3EditText.setText(number3);
+                        numberCheckboxes--;
                     }
                     String toastText = "number1=" + number1 + " number2="+ number2 + " number3=" + number3;
                     Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_LONG).show();
+                    secondaryActivityIntent = new Intent(Constants.SECONDARY_ACTIVITY_ACTION);
+                    secondaryActivityIntent.putExtra(Constants.EXTRA_DATA_NUMBER1, number1);
+                    secondaryActivityIntent.putExtra(Constants.EXTRA_DATA_NUMBER2, number2);
+                    secondaryActivityIntent.putExtra(Constants.EXTRA_DATA_NUMBER3, number3);
+                    secondaryActivityIntent.putExtra(Constants.EXTRA_DATA_NUMBER_CHECKBOXES, String.valueOf(numberCheckboxes));
+                    startActivityForResult(secondaryActivityIntent, Constants.ANOTHER_ACTIVITY_REQUEST_CODE);
                     break;
                 case R.id.CHECK1:
                     checked1 = checkBox1.isChecked();
@@ -106,6 +118,20 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity {
             int randIdx = new Random().nextInt(size);
             String randomElem = list.get(randIdx);
             return randomElem;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case Constants.ANOTHER_ACTIVITY_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    Toast.makeText(this, "Secondary activity finished with result code OK", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(this, "Secondary activity finished with result code CANCEL", Toast.LENGTH_LONG).show();
+                }
+                break;
         }
     }
 
