@@ -29,6 +29,7 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity {
     private String number1 = "", number2 = "", number3 = "";
     private boolean checked1, checked2, checked3;
     private Intent secondaryActivityIntent;
+    private String scor = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,11 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity {
         number1EditText.setOnClickListener(clickListener);
         number2EditText.setOnClickListener(clickListener);
         number3EditText.setOnClickListener(clickListener);
+
+        if (savedInstanceState != null && savedInstanceState.getInt(Constants.SCOR_STATE) != 0) {
+            scor = savedInstanceState.getString(Constants.SCOR_STATE);
+            Toast.makeText(this, "Scor = " + scor, Toast.LENGTH_LONG).show();
+        }
     }
 
     private class HandleClickListener implements View.OnClickListener {
@@ -80,6 +86,8 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity {
                     }
                     String toastText = "number1=" + number1 + " number2="+ number2 + " number3=" + number3;
                     Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_LONG).show();
+                    if (scor.equals(calculateScor(numberCheckboxes)))
+                        break;
                     secondaryActivityIntent = new Intent(Constants.SECONDARY_ACTIVITY_ACTION);
                     secondaryActivityIntent.putExtra(Constants.EXTRA_DATA_NUMBER1, number1);
                     secondaryActivityIntent.putExtra(Constants.EXTRA_DATA_NUMBER2, number2);
@@ -119,6 +127,17 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity {
             String randomElem = list.get(randIdx);
             return randomElem;
         }
+
+        public String calculateScor(int numberCheckboxes) {
+            if (numberCheckboxes == 0)
+                return "100";
+            else if (numberCheckboxes == 1)
+                return "50";
+            else if (numberCheckboxes == 2)
+                return "10";
+            else
+                return "0";
+        }
     }
 
     @Override
@@ -127,15 +146,37 @@ public class PracticalTest01Var06MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case Constants.ANOTHER_ACTIVITY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    String scor = "";
                     if (data != null) {
-                        scor += data.getStringExtra("SCOR");
+                        int prev;
+                        if (scor.equals("")){
+                            prev = 0;
+                        } else {
+                            prev = Integer.parseInt(scor);
+                        }
+                        String newsc = data.getStringExtra("SCOR");
+                        prev += Integer.parseInt(newsc);
+                        scor += String.valueOf(prev);
                     }
                     Toast.makeText(this, "Scor = " + scor, Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(this, "Secondary activity finished with result code CANCEL", Toast.LENGTH_LONG).show();
                 }
                 break;
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putString(Constants.SCOR_STATE, scor);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState.getString(Constants.SCOR_STATE) != null) {
+            //restore:
+         //   scor = savedInstanceState.getString(Constants.SCOR_STATE);
         }
     }
 
